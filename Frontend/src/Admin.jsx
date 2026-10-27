@@ -105,7 +105,7 @@ export default function Admin() {
 
   const items = tab === "Appointments" ? appointments : tab === "Services" ? services : articles;
   return <section className="admin-page">
-    <div className="admin-heading"><div><span className="admin-kicker">MAASIN HEALTHLINE</span><h1>Admin dashboard</h1><p>Manage appointment requests, services, and health information.</p></div><div className="admin-head-actions"><span className="admin-user-label">{currentUser.username}</span><button className="admin-button secondary" onClick={loadAll}><RefreshCw size={16}/> Refresh</button><button className="admin-button secondary" onClick={signOut}>Sign out</button></div></div>
+    <div className="admin-heading"><div><span className="admin-kicker">MAASIN HEALTHLINE</span><h1>Admin dashboard</h1><p>Manage appointment requests, services, and health information.</p></div><div className="admin-head-actions"><span className="admin-user-label">{currentUser.username}</span><button className="admin-button secondary" onClick={signOut}>Sign out</button></div></div>
     <div className="admin-tabs">{tabs.map((t) => <button key={t} className={tab === t ? "selected" : ""} onClick={() => { setTab(t); setEditing(null); setError(""); setMessage(""); }}>{t}<span>{t === "Appointments" ? appointments.length : t === "Services" ? services.length : articles.length}</span></button>)}</div>
     {message && <div className="admin-message success">{message}</div>}{error && <div className="admin-message error">{error}</div>}
     <div className="admin-list-heading"><h2>{tab}</h2><button className="admin-button primary" onClick={startCreate}><Plus size={16}/> Add {tab === "Appointments" ? "appointment" : tab === "Services" ? "service" : "article"}</button></div>
