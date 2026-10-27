@@ -25,7 +25,6 @@ const Service =
   mongoose.models.Service ||
   mongoose.model("Service", serviceSchema);
 
-// GET /api/services?search=consultation
 router.get("/", async (req, res) => {
   try {
     const search = String(req.query.search || "").trim();
