@@ -1,12 +1,12 @@
 
 require("dotenv").config();
 
-// const OpenAI = require("openai");
+const OpenAI = require("openai");
 
-// const openrouter = new OpenAI({
-//   baseURL: "https://openrouter.ai/api/v1",
-//   apiKey: process.env.OPENROUTER_API_KEY,
-// });
+const openrouter = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
 
 const express = require("express");
 const cors = require("cors");
