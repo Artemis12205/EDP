@@ -1,7 +1,13 @@
 const mongoose = require("mongoose");
+const { randomUUID } = require("crypto");
 
-const appointmentSchema = new mongoose.Schema(
-  {
+const appointmentSchema = new mongoose.Schema({
+    appointmentCode: {
+      type: String,
+      unique: true,
+      default: () => `APT-${randomUUID()}`
+    },
+
     patientName: {
       type: String,
       required: true,
