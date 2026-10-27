@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { Pencil, Plus, RefreshCw, Trash2, X } from "lucide-react";
 import {
   getServices, createService, updateService, deleteService,
   getAppointments, createAppointment, updateAppointment, deleteAppointment,
