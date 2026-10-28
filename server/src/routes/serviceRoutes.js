@@ -25,6 +25,26 @@ const Service =
   mongoose.models.Service ||
   mongoose.model("Service", serviceSchema);
 
+  
+router.get("/active", async (req, res) => {
+  try {
+    const services = await Service.find({ isActive: true });
+
+    res.json({
+      success: true,
+      data: services
+    });
+  } catch (error) {
+    console.error("Failed to load active services:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve active services."
+    });
+  }
+});
+
+
 router.get("/", async (req, res) => {
   try {
     const search = String(req.query.search || "").trim();

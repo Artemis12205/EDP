@@ -4,7 +4,7 @@ import Admin from "./Admin";
 import {
   getHealth,
   getHealthInformation,
-  getServices,
+  getActiveServices,
   createAppointment,
 } from "./api";
 import AIChatbot from "./AIChatbot";
@@ -36,14 +36,22 @@ export default function App() {
 
   useEffect(() => {
     getHealth().then(() => setApiState("online")).catch(() => setApiState("offline"));
-    getServices().then(setServices).catch(() => setServices([]));
+    getActiveServices()
+  .then(setServices)
+  .catch((error) => {
+    console.error("Failed to load active services:", error);
+    setServices([]);
+  });
     getHealthInformation().then(setArticles).catch(() => setArticles([]));
   }, []);
 
   const visibleServices = useMemo(() => {
-    const list = services.length ? services : fallbackServices;
-    return list.filter(s => `${s.name || ""} ${s.description || ""}`.toLowerCase().includes(search.toLowerCase()));
-  }, [services, search]);
+  return services.filter((s) =>
+    `${s.name || ""} ${s.description || ""}`
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+}, [services, search]);
   const visibleArticles = useMemo(() => {
     const list = articles.length ? articles : fallbackArticles;
     return list.filter(a => `${a.title || ""} ${a.category || ""} ${a.content || ""}`.toLowerCase().includes(articleSearch.toLowerCase()));
@@ -127,7 +135,11 @@ const submitAppointment = async (e) => {
 
       {active === "Services" && <section className="section page-section"><PageIntro eyebrow="HEALTH CENTER DIRECTORY" title="Our services" description="Browse health services and find the care information you need."/><div className="search-box"><Search size={18}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search services..." aria-label="Search services"/></div><ServiceGrid services={visibleServices}/>{apiState === "offline" && <p className="inline-note">Showing sample service information because the backend could not be reached. Start your backend at localhost:5000 to load live services.</p>}</section>}
 
-      {active === "Appointments" && <section className="section page-section"><PageIntro eyebrow="PLAN YOUR VISIT" title="Appointment information" description="Fill in your details to prepare an appointment request."/><div className="appointment-layout"><aside className="appointment-aside"><div className="aside-icon"><CalendarDays size={30}/></div><h3>Before you submit</h3><p>Choose the service you need and provide a contact detail so the health center can identify your request.</p><ul><li><CheckCircle2 size={17}/> Use your complete name</li><li><CheckCircle2 size={17}/> Choose your preferred date</li><li><CheckCircle2 size={17}/> Include important notes</li></ul><div className="notice-box"><Clock size={18}/><span>Appointment requests are submitted online. Please wait for confirmation.</span></div></aside><form className="appointment-form" onSubmit={submitAppointment}><h3>Appointment request</h3><div className="form-grid"><label>Full name<input required value={form.fullName} onChange={e=>setForm({...form,fullName:e.target.value})} placeholder="Enter your full name"/></label><label>Contact number or email<input required value={form.contact} onChange={e=>setForm({...form,contact:e.target.value})} placeholder="How can we contact you?"/></label><label>Health service<select required value={form.service} onChange={e=>setForm({...form,service:e.target.value})}><option value="">Select a service</option>{(services.length ? services : fallbackServices).map(s=><option key={s._id || s.id || s.name} value={s.name}>{s.name}</option>)}</select></label><label>Preferred date<input required type="date" min={new Date().toISOString().slice(0,10)} value={form.date} onChange={e=>setForm({...form,date:e.target.value})}/></label><label className="full-width">Additional notes<textarea rows="4" value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} placeholder="Optional notes about your visit"/></label></div><button className="primary-btn submit-btn" type="submit">Review request <ArrowRight size={17}/></button>{notice && <div className="form-notice">{notice}</div>}</form></div></section>}
+      {active === "Appointments" && <section className="section page-section"><PageIntro eyebrow="PLAN YOUR VISIT" title="Appointment information" description="Fill in your details to prepare an appointment request."/><div className="appointment-layout"><aside className="appointment-aside"><div className="aside-icon"><CalendarDays size={30}/></div><h3>Before you submit</h3><p>Choose the service you need and provide a contact detail so the health center can identify your request.</p><ul><li><CheckCircle2 size={17}/> Use your complete name</li><li><CheckCircle2 size={17}/> Choose your preferred date</li><li><CheckCircle2 size={17}/> Include important notes</li></ul><div className="notice-box"><Clock size={18}/><span>Appointment requests are submitted online. Please wait for confirmation.</span></div></aside><form className="appointment-form" onSubmit={submitAppointment}><h3>Appointment request</h3><div className="form-grid"><label>Full name<input required value={form.fullName} onChange={e=>setForm({...form,fullName:e.target.value})} placeholder="Enter your full name"/></label><label>Contact number or email<input required value={form.contact} onChange={e=>setForm({...form,contact:e.target.value})} placeholder="How can we contact you?"/></label><label>Health service<select required value={form.service} onChange={e=>setForm({...form,service:e.target.value})}><option value="">Select a service</option>{services.map((s) => (
+  <option key={s._id || s.id || s.name} value={s.name}>
+    {s.name}
+  </option>
+))}</select></label><label>Preferred date<input required type="date" min={new Date().toISOString().slice(0,10)} value={form.date} onChange={e=>setForm({...form,date:e.target.value})}/></label><label className="full-width">Additional notes<textarea rows="4" value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} placeholder="Optional notes about your visit"/></label></div><button className="primary-btn submit-btn" type="submit">Review request <ArrowRight size={17}/></button>{notice && <div className="form-notice">{notice}</div>}</form></div></section>}
 
       {active === "Health Information" && <section className="section page-section"><PageIntro eyebrow="LEARN AND STAY WELL" title="Health information" description="Read simple, general wellness information for you and your family."/><div className="search-box"><Search size={18}/><input value={articleSearch} onChange={e=>setArticleSearch(e.target.value)} placeholder="Search health topics..." aria-label="Search health topics"/></div><div className="article-grid">{visibleArticles.map((a,i)=><article className="article-card" key={a._id || a.id || a.title}><div className={`article-symbol tone-${i%3}`}><HeartPulse size={24}/></div><span className="article-category">{a.category || "Health tips"}</span><h3>{a.title}</h3><p>{a.content || a.description || "Ask a qualified health professional for advice about your personal health needs."}</p><small>General education only</small></article>)}</div></section>}
 

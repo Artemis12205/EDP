@@ -22,6 +22,12 @@ export async function getServices(search = "") {
   const result = await request(`/services${search ? `?search=${encodeURIComponent(search)}` : ""}`);
   return Array.isArray(result) ? result : result?.data || [];
 }
+
+export async function getActiveServices() {
+  const result = await request("/services/active");
+  return Array.isArray(result) ? result : result?.data || [];
+}
+
 export async function createService(data) { return request("/services", json("POST", data)); }
 export async function updateService(id, data) { return request(`/services/${id}`, json("PUT", data)); }
 export async function deleteService(id) { return request(`/services/${id}`, { method: "DELETE" }); }
