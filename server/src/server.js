@@ -126,9 +126,9 @@ if (adminUsername && adminPassword) {
     username: adminUsername
   });
 
-  if (!existingAdmin) {
     const passwordHash = await bcrypt.hash(adminPassword, 12);
 
+    if (!existingAdmin) {
     await User.create({
       username: adminUsername,
       name: "Administrator",
@@ -140,6 +140,9 @@ if (adminUsername && adminPassword) {
       `Initial administrator created for ${adminUsername}`
     );
   } else {
+    existingAdmin.passwordHash = passwordHash;
+    await existingAdmin.save();
+
     console.log(
       `Administrator "${adminUsername}" already exists`
     );
